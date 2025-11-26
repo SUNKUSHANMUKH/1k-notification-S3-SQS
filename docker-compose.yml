@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  app:
+    build: ./app
+    restart: always
+    volumes:
+      - ./app/data:/usr/src/app/data
+    expose:
+      - "8080"
+
+  fluentd:
+    build: ./fluentd
+    depends_on:
+      - app
+    restart: always
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      FLUENTD_WORKERS: 4  # Multi-worker mode
+    volumes:
+      - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf
